@@ -14,7 +14,8 @@ export interface ResumeInfo {
 
 export interface GeneratedResume {
   title: string
-  content: string
+  content?: string
+  data?: string
   generatedAt: Date
 }
 
