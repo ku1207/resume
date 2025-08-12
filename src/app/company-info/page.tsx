@@ -6,12 +6,13 @@ import { useResumeStore } from '@/store/resumeStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { DEFAULT_RESUME_QUESTIONS } from '@/constants/resumeQuestions'
+import { CompanyStructuredData, Job } from '@/types/resume'
 
 export default function CompanyInfoPage() {
   const router = useRouter()
   const { companyResearch, formData, setGeneratedResume, setIsGenerating, setSelectedJob: setStoreSelectedJob } = useResumeStore()
-  const [selectedJob, setSelectedJob] = useState<any>(null)
-  const [jobsList, setJobsList] = useState<any[]>([])
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null)
+  const [jobsList, setJobsList] = useState<Job[]>([])
 
   useEffect(() => {
     if (!companyResearch) {
@@ -23,12 +24,12 @@ export default function CompanyInfoPage() {
     try {
       const jsonMatch = companyResearch.data.match(/\{[\s\S]*\}/)
       if (jsonMatch) {
-        const jsonData = JSON.parse(jsonMatch[0])
+        const jsonData = JSON.parse(jsonMatch[0]) as CompanyStructuredData
         if (jsonData.jobs && Array.isArray(jsonData.jobs)) {
           setJobsList(jsonData.jobs)
         }
       }
-    } catch (error) {
+    } catch {
       console.log('JSON 파싱 실패, jobs 목록을 찾을 수 없습니다')
     }
   }, [companyResearch, router])
@@ -54,10 +55,10 @@ export default function CompanyInfoPage() {
           userInfo: {
             strengths: formData.personalInfo.strengths,
             weaknesses: formData.personalInfo.weaknesses,
-            experience: formData.personalInfo.experience,
-            skills: formData.personalInfo.skills,
-            education: formData.personalInfo.education,
-            awards: formData.personalInfo.awards,
+            experience: formData.personalInfo.experiences.join(', '),
+            skills: formData.personalInfo.skills.join(', '),
+            education: formData.personalInfo.educations.join(', '),
+            awards: formData.personalInfo.awards.join(', '),
           },
           companyInfo: companyResearch.data,
           selectedJob: selectedJob,
@@ -73,7 +74,8 @@ export default function CompanyInfoPage() {
       
       // 생성된 이력서 저장
       setGeneratedResume({
-        data: result.data,
+        title: `${formData.resumeInfo.company} 지원 이력서`,
+        content: typeof result.data === 'string' ? result.data : JSON.stringify(result.data),
         generatedAt: new Date()
       })
 
@@ -122,10 +124,10 @@ export default function CompanyInfoPage() {
       // JSON 구조인지 확인
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        const jsonData = JSON.parse(jsonMatch[0]);
+        const jsonData = JSON.parse(jsonMatch[0]) as CompanyStructuredData;
         return renderStructuredData(jsonData);
       }
-    } catch (error) {
+    } catch {
       console.log('JSON 파싱 실패, 일반 텍스트로 처리');
     }
     
@@ -133,7 +135,7 @@ export default function CompanyInfoPage() {
     return formatMarkdownContent(content);
   }
 
-  const renderStructuredData = (data: any) => {
+  const renderStructuredData = (data: CompanyStructuredData) => {
     // 색상 배열 정의 (각 직무별로 다른 색상 테마)
     const colorThemes = [
       {
@@ -230,7 +232,7 @@ export default function CompanyInfoPage() {
           <h2 className="text-2xl font-bold mb-6 text-gray-800">채용 정보</h2>
           {data.jobs && data.jobs.length > 0 ? (
             <div className="space-y-6">
-              {data.jobs.map((job: any, index: number) => {
+              {data.jobs.map((job: Job, index: number) => {
                 const theme = colorThemes[index % colorThemes.length]
                 return (
                   <div key={index} className={`border ${theme.border} ${theme.background} rounded-lg p-6 relative overflow-hidden`}>

@@ -21,12 +21,6 @@ export default function PersonalInfoPage() {
     awards: formData?.personalInfo.awards || ['']
   })
 
-  const addField = (section: string) => {
-    setPersonalInfo(prev => ({
-      ...prev,
-      [section]: [...prev[section as keyof typeof prev], '']
-    }))
-  }
 
   const updateField = (section: string, index: number, value: string) => {
     setPersonalInfo(prev => ({
@@ -35,12 +29,6 @@ export default function PersonalInfoPage() {
     }))
   }
 
-  const removeField = (section: string, index: number) => {
-    setPersonalInfo(prev => ({
-      ...prev,
-      [section]: prev[section as keyof typeof prev].filter((_, i) => i !== index)
-    }))
-  }
 
   const renderFieldSection = (title: string, section: string) => {
     const data = personalInfo[section as keyof typeof personalInfo]

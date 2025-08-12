@@ -1,16 +1,16 @@
 import { create } from 'zustand'
-import { ResumeFormData, GeneratedResume, CompanyResearchResult } from '@/types/resume'
+import { ResumeFormData, GeneratedResume, CompanyResearchResult, Job } from '@/types/resume'
 
 interface ResumeState {
   formData: ResumeFormData | null
   generatedResume: GeneratedResume | null
   companyResearch: CompanyResearchResult | null
-  selectedJob: any | null
+  selectedJob: Job | null
   isGenerating: boolean
   setFormData: (data: ResumeFormData) => void
   setGeneratedResume: (resume: GeneratedResume) => void
   setCompanyResearch: (research: CompanyResearchResult) => void
-  setSelectedJob: (job: any) => void
+  setSelectedJob: (job: Job) => void
   setIsGenerating: (generating: boolean) => void
   reset: () => void
 }

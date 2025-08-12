@@ -74,6 +74,7 @@ ${resumeQuestions.map((question, index) => `${index + 1}. ${question}`).join('\n
     return result;
   } catch (error) {
     console.error('이력서 생성 중 오류:', error);
-    throw new Error(`이력서 생성 실패: ${(error as any)?.message ?? error}`);
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`이력서 생성 실패: ${message}`);
   }
 }

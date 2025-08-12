@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useResumeStore } from '@/store/resumeStore'
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 export default function ResumeResultPage() {
   const router = useRouter()
@@ -28,7 +27,7 @@ export default function ResumeResultPage() {
           const answer = resumeData.resumeQuestionAnswer[index] || '답변이 없습니다.'
           return `${question}\n\n${answer}`
         }).join('\n\n---\n\n')
-      } catch (error) {
+      } catch {
         return '데이터 파싱 오류'
       }
     } else if (generatedResume?.content) {

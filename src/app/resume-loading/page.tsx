@@ -4,12 +4,16 @@ import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useResumeStore } from '@/store/resumeStore'
 import { Card, CardContent } from '@/components/ui/card'
+import { ResumeFormData, CompanyResearchResult } from '@/types/resume'
 
 // 기업 정보를 구조화하여 포맷팅하는 함수
-const formatCompanyInfo = (formData: any, companyResearch: any) => {
+const formatCompanyInfo = (
+  formData: ResumeFormData,
+  companyResearch: CompanyResearchResult | null
+) => {
   let companyInfo = `회사명: ${formData.resumeInfo.company}\n`
   
-  if (companyResearch?.data) {
+  if (companyResearch && companyResearch.data) {
     try {
       // JSON 구조에서 회사 정보 추출
       const jsonMatch = companyResearch.data.match(/\{[\s\S]*\}/)
@@ -34,20 +38,24 @@ const formatCompanyInfo = (formData: any, companyResearch: any) => {
           companyInfo += `근무형태: ${selectedJob.workMode || '-'}\n`
           companyInfo += `급여: ${selectedJob.salaryRange || '-'}\n`
           
-          if (selectedJob.responsibilities?.length > 0) {
-            companyInfo += `주요 업무:\n${selectedJob.responsibilities.map((r: string) => `- ${r}`).join('\n')}\n`
+          const responsibilities = selectedJob.responsibilities ?? []
+          if (responsibilities.length > 0) {
+            companyInfo += `주요 업무:\n${responsibilities.map((r: string) => `- ${r}`).join('\n')}\n`
           }
-          
-          if (selectedJob.qualifications?.length > 0) {
-            companyInfo += `자격 요건:\n${selectedJob.qualifications.map((q: string) => `- ${q}`).join('\n')}\n`
+
+          const qualifications = selectedJob.qualifications ?? []
+          if (qualifications.length > 0) {
+            companyInfo += `자격 요건:\n${qualifications.map((q: string) => `- ${q}`).join('\n')}\n`
           }
-          
-          if (selectedJob.preferredQualifications?.length > 0) {
-            companyInfo += `우대 사항:\n${selectedJob.preferredQualifications.map((p: string) => `- ${p}`).join('\n')}\n`
+
+          const preferredQualifications = selectedJob.preferredQualifications ?? []
+          if (preferredQualifications.length > 0) {
+            companyInfo += `우대 사항:\n${preferredQualifications.map((p: string) => `- ${p}`).join('\n')}\n`
           }
-          
-          if (selectedJob.requiredSkills?.length > 0) {
-            companyInfo += `필요 기술: ${selectedJob.requiredSkills.join(', ')}\n`
+
+          const requiredSkills = selectedJob.requiredSkills ?? []
+          if (requiredSkills.length > 0) {
+            companyInfo += `필요 기술: ${requiredSkills.join(', ')}\n`
           }
         }
       }
